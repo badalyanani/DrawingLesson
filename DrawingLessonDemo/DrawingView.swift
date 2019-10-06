@@ -2,11 +2,29 @@
 //  DrawingView.swift
 //  DrawingLessonDemo
 //
-//  Created by hovhannes safaryan on 9/17/19.
-//  Copyright © 2019 hovhannes safaryan. All rights reserved.
+//  Created by Ani Namalyan on 9/17/19.
+//  Copyright © 2019 Ani Namalyan. All rights reserved.
 //
 import UIKit.UIGestureRecognizerSubclass
 import UIKit
+
+
+struct ShapeLayerType {
+    var drawLayer: CAShapeLayer
+    var color: UIColor
+    //    var movePosition: CGPoint?
+    
+    init(shapeLayer: CAShapeLayer, color: UIColor) {
+        self.drawLayer = shapeLayer
+        self.color = color
+    }
+}
+
+class ShapeLayer: CAShapeLayer {
+    override func contains(_ p: CGPoint) -> Bool {
+        return path?.contains(p, using: .winding, transform: .identity) ?? false
+    }
+}
 
 struct PathType{
     var path: UIBezierPath
@@ -23,41 +41,27 @@ class DrawingView: UIView {
     enum Mode {
         case draw
         case clear
+        case move
     }
-    
-    
-    enum State {
-        case Began
-        case Ended
-    }
-    
-    
-    // var pathRecognizer: UIPanGestureRecognizer
     
     var mode: Mode = .draw
     
-    var state: State = .Ended
-    //var pathArray: [UIBezierPath]
+    
+    //pordzum enq nor mas@
+    var shapeLayers = [ShapeLayerType]()
+    var shapeLayer: CAShapeLayer!
+    var undoLayers = [ShapeLayerType]()
     
     static var  count = 0
-    var color: UIColor = UIColor.black
-    
+    var color: UIColor = .black
     var size: CGSize = CGSize.init()
-    
     var path = UIBezierPath()
-    
     var paths = [PathType]()
-    
     var pathForRedo = [PathType]()
-    
     var lineWidth: CGFloat = 10
-    
     var maskImageView = UIImageView()
-    
     var pathsCoordinates = [PathType]()
     
-    
-    //    var pathRecognizer = UIPanGestureRecognizer( target: self, action: Selector("pathed:"))
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -88,83 +92,61 @@ class DrawingView: UIView {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first!
-        //setupPath()
-        path = UIBezierPath()
-        path.lineWidth = lineWidth
-        path.lineCapStyle = .round
-        path.lineJoinStyle = .round
-        //pathArray.append(path)
         
-        paths.append(PathType(path: path, color:( mode == .clear ? self.backgroundColor :  color)!))
-        path.move(to: touch.location(in: self))
-        
-        updateMaskImageView()
-        if (state == .Began){
-
-            for path in paths{
-                if(touch.location(in: self).x == path.path.currentPoint.x ){
-                    if(touch.location(in: self).y == path.path.currentPoint.y){
-                        pathsCoordinates.append(path)
-                        
-                        
-                    }
-                }
-
-
-            }
+        if mode == .draw || mode == .clear {
+            
+            let touch = touches.first!
+            
+            path = UIBezierPath()
+            path.lineWidth = lineWidth
+            path.lineCapStyle = .round
+            path.lineJoinStyle = .round
+            path.lineJoinStyle = .round
+            //pathArray.append(path)
+            
+            
+            paths.append(PathType(path: path, color:( mode == .clear ? self.backgroundColor :  color)!))
+            path.move(to: touch.location(in: self))
+            undoLayers = []
         }
+        setNeedsDisplay()
+        updateMaskImageView()
+        
         
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first!
-        path.addLine(to: touch.location(in: self))
+        if mode == .draw || mode == .clear{
+            let touch = touches.first!
+            path.addLine(to: touch.location(in: self))
+        }
+        setNeedsDisplay()
         updateMaskImageView()
-        
-        
         
         
     }
     
-    
-    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first!
-        endTouches(at: touch.location(in: self))
-        setNeedsDisplay()
-        
-        //        state = .Ended
-        
-        //pathsCoordinates.rem
-        
-        
-        if(state == .Began){
-         // var newPlacePath =  pathsCoordinates.removeLast()
-//            newPlacePath.path.currentPoint.x = touch.location(in: self).x
-//            newPlacePath.path.currentPoint.y = touch.location(in: self).y
-            
-//            newPlacePath.path.move(to: touch.location(in: self))
-            
-            
-            
-            
-            
-            
-            
-            
-//            convertPathsToImage(pathsCoordinates)
-            
-            
-            state = .Ended
-
+        if mode == .draw || mode == .clear{
+            let touch = touches.first!
+            endTouches(at: touch.location(in: self))
+            touchEnded()
         }
+        setNeedsDisplay()
+        updateMaskImageView()
+        
         
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let touch = touches.first!
-        endTouches(at: touch.location(in: self))
+        if mode == .draw || mode == .clear{
+            let touch = touches.first!
+            endTouches(at: touch.location(in: self))
+            touchEnded()
+        }
+        setNeedsDisplay()
+        updateMaskImageView()
+        
     }
     
     func endTouches(at point: CGPoint) {
@@ -172,7 +154,34 @@ class DrawingView: UIView {
         print("KAR:: + \(path.lineWidth)")
         updateMaskImageView()
         
-        
+    }
+    
+    
+    func touchEnded() {
+        shapeLayer = ShapeLayer()
+        shapeLayer.frame = path.bounds
+        path.apply(CGAffineTransform(translationX: -path.bounds.origin.x, y: -path.bounds.origin.y))
+        shapeLayer.path = path.cgPath
+        shapeLayer.lineWidth = path.lineWidth
+        shapeLayer.opacity = 1
+        shapeLayer.lineCap = .round
+        shapeLayer.lineJoin = .round
+        shapeLayer.strokeColor = color.cgColor
+        shapeLayer.fillColor = nil
+        //        shapeLayer.backgroundColor = UIColor.randomColor.cgColor
+        shapeLayers.append(ShapeLayerType(shapeLayer: shapeLayer, color: color))
+        layer.addSublayer(shapeLayer)
+        path.removeAllPoints()
+        let newActions = [
+            "onOrderIn": NSNull(),
+            "onOrderOut": NSNull(),
+            "sublayers": NSNull(),
+            "contents": NSNull(),
+            "bounds": NSNull(),
+        ]
+        shapeLayer.actions = newActions
+        updateMaskImageView()
+        setNeedsDisplay()
     }
     
     func updateMaskImageView() {
@@ -195,17 +204,6 @@ class DrawingView: UIView {
         setNeedsDisplay()
     }
     
-    //    func pathed(c: UIPanGestureRecognizer) {
-    //        if c.state == .ended {
-    //        let center = c.locationInView(UIView)
-    //        findCircledView(center)
-    //      }
-    //    }
-    
-    
-    
-    
-    
     func  changeBrush(brushSize: UISlider){
         // print("ANi:: + \(brushSize.value)")
         //print(CGFloat(brushSize.value))
@@ -215,115 +213,63 @@ class DrawingView: UIView {
     
     func undoDrawingView(){
         
-        
-        
         if !paths.isEmpty{
             pathForRedo.append(paths.removeLast())
             setNeedsDisplay()
         }
-        
     }
     
+    
+    
+    func clearView(){
+        self.changeColor(changeColor: self.backgroundColor!)
+        
+    }
     
     func redoDrawingView(){
         if !pathForRedo.isEmpty {
             paths.append(pathForRedo.removeLast())
         }
         setNeedsDisplay()
-        
-        
     }
     
     
     func reset(){
         if !paths.isEmpty {
             paths.removeAll()
+            setNeedsDisplay()
+        }
+        if !shapeLayers.isEmpty{
+            shapeLayers.removeAll()
+            setNeedsDisplay()
         }
         setNeedsDisplay()
     }
     
+    func undoLayer() {
+        guard !shapeLayers.isEmpty, let _ = layer.sublayers, let lastIndex = layer.sublayers?.count else { return }
+        print(shapeLayers.count)
+        layer.sublayers?.remove(at: lastIndex - 1)
+        undoLayers.append(shapeLayers.removeLast())
+        path = UIBezierPath()
+        setNeedsDisplay()
+    }
     
-    
-    
-    func movetoNewPlace(){
-        
-        state = .Began
-        
-        
+    func redoLayer() {
+        guard !undoLayers.isEmpty else { return }
+        shapeLayers.append(undoLayers.removeLast())
+        layer.addSublayer(shapeLayers.last!.drawLayer)
+        setNeedsDisplay()
     }
     
     
-    
-//    func createPanGestureRecognizer(targetView: UIImageView) {
-//        var panGesture = UIPanGestureRecognizer(target: self, action:(Selector("handlePanGesture:")))
-//        targetView.addGestureRecognizer(panGesture)
-//    }
-//    func handlePanGesture(panGesture: UIPanGestureRecognizer) {
-//        // get translation
-//        var translation = panGesture.translationInView(pat)
-//        panGesture.setTranslation(CGPointZero, inView: view)
-//        println(translation)
-//
-//        // create a new Label and give it the parameters of the old one
-//        var label = panGesture.view as UIImageView
-//        label.center = CGPoint(x: label.center.x+translation.x, y: label.center.y+translation.y)
-//        label.multipleTouchEnabled = true
-//        label.userInteractionEnabled = true
-//
-//        if panGesture.state == UIGestureRecognizerState.Began {
-//            // add something you want to happen when the Label Panning has started
-//        }
-//
-//        if panGesture.state == UIGestureRecognizerState.Ended {
-//            // add something you want to happen when the Label Panning has ended
-//        }
-//
-//        if panGesture.state == UIGestureRecognizerState.Changed {
-//            // add something you want to happen when the Label Panning has been change ( during the moving/panning )
-//        } else {
-//            // or something when its not moving
-//        }
-//    }
-    
-    
-    
-//    func convertPathsToImage(paths: [UIBezierPath]) -> UIImage
-//    {
-//        let imageWidth: CGFloat = lineWidth
-//        let imageHeight: CGFloat  = 20.0
-//        var newpath = [PathType]()
-//
-//        for path in paths{
-//            newpath.append(path)
-//        }
-//
-//        // Make a graphics context
-//
-//        let context = UIGraphicsGetCurrentContext()
-//
-//
-//
-//
-//        let image = UIGraphicsGetImageFromCurrentImageContext()
-//
-//        UIGraphicsEndImageContext()
-//
-//        return image
-//    }
-
-
     override func draw(_ rect: CGRect) {
         
-        if(state == .Ended){
-        
-        for members in paths{
-            members.color.setStroke()
-            members.path.stroke()
+        if(mode == .draw || mode == .clear){
+            color.setStroke()
+            path.stroke()
+            
         }
-        
-        //setNeedsDisplay()
-        
     }
-    }
-    
 }
+

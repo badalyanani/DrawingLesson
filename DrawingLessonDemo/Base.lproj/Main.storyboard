@@ -20,10 +20,10 @@
                                 <rect key="frame" x="0.0" y="44" width="414" height="819"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5ff-yb-roP">
-                                        <rect key="frame" x="0.0" y="623" width="414" height="97"/>
+                                        <rect key="frame" x="0.0" y="623" width="414" height="104"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="23" translatesAutoresizingMaskIntoConstraints="NO" id="X8y-rf-IQm">
-                                                <rect key="frame" x="49" y="47" width="295" height="30"/>
+                                                <rect key="frame" x="49" y="54" width="295" height="30"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J0Y-Or-wiq">
                                                         <rect key="frame" x="0.0" y="0.0" width="30" height="30"/>
@@ -172,42 +172,41 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="59" translatesAutoresizingMaskIntoConstraints="NO" id="wTS-Qj-Py4">
-                                        <rect key="frame" x="25" y="743" width="376" height="48"/>
+                                        <rect key="frame" x="25" y="750" width="376" height="41"/>
                                         <subviews>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eN2-VC-hdz">
-                                                <rect key="frame" x="0.0" y="0.0" width="30" height="48"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
-                                                <state key="normal" title="⎚">
-                                                    <color key="titleColor" red="0.016804177310000001" green="0.19835099580000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                </state>
-                                                <connections>
-                                                    <action selector="clear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rt6-o0-BUQ"/>
-                                                </connections>
-                                            </button>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="3cg-lQ-f42">
-                                                <rect key="frame" x="87" y="0.0" width="202" height="49"/>
-                                                <connections>
-                                                    <action selector="brushSizeChanger:" destination="BYZ-38-t0r" eventType="valueChanged" id="QW0-GW-wJY"/>
-                                                </connections>
-                                            </slider>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o3E-GF-XFd">
-                                                <rect key="frame" x="346" y="0.0" width="30" height="48"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <state key="normal" title="✏️"/>
-                                                <connections>
-                                                    <action selector="draw:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ybD-8f-DNa"/>
-                                                </connections>
-                                            </button>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="59" translatesAutoresizingMaskIntoConstraints="NO" id="OfL-30-HtS">
+                                                <rect key="frame" x="0.0" y="0.0" width="376" height="41"/>
+                                                <subviews>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eN2-VC-hdz">
+                                                        <rect key="frame" x="0.0" y="0.0" width="51" height="41"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                                        <state key="normal" title="clear">
+                                                            <color key="titleColor" red="0.016804177310000001" green="0.19835099580000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="clear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Wvc-oz-5bI"/>
+                                                        </connections>
+                                                    </button>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="3cg-lQ-f42">
+                                                        <rect key="frame" x="108" y="0.0" width="106" height="42"/>
+                                                        <connections>
+                                                            <action selector="brushSizeChanger:" destination="BYZ-38-t0r" eventType="valueChanged" id="QW0-GW-wJY"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0rD-jS-KpW">
+                                                        <rect key="frame" x="271" y="0.0" width="105" height="42"/>
+                                                        <segments>
+                                                            <segment title="✏️"/>
+                                                            <segment title="move"/>
+                                                        </segments>
+                                                        <connections>
+                                                            <action selector="drawMode:" destination="BYZ-38-t0r" eventType="valueChanged" id="U8C-79-JU0"/>
+                                                        </connections>
+                                                    </segmentedControl>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4dJ-rx-dcK">
-                                        <rect key="frame" x="333" y="167" width="38" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Move"/>
-                                        <connections>
-                                            <action selector="changepathlocation:" destination="BYZ-38-t0r" eventType="touchUpInside" id="9lh-UL-vPU"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
@@ -222,9 +221,6 @@
                                     <constraint firstItem="loP-nR-2uV" firstAttribute="top" secondItem="joo-iF-LjE" secondAttribute="top" constant="17" id="pbK-m5-BVL"/>
                                     <constraint firstItem="5ff-yb-roP" firstAttribute="top" secondItem="joo-iF-LjE" secondAttribute="top" constant="623" id="wbt-yW-nfS"/>
                                 </constraints>
-                                <connections>
-                                    <outletCollection property="gestureRecognizers" destination="HQP-Yf-JJ1" appends="YES" id="0nn-hd-js2"/>
-                                </connections>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -241,7 +237,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <panGestureRecognizer cancelsTouchesInView="NO" minimumNumberOfTouches="1" id="HQP-Yf-JJ1"/>
             </objects>
             <point key="canvasLocation" x="-159.42028985507247" y="239.73214285714283"/>
         </scene>
