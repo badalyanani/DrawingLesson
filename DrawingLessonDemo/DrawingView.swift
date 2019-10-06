@@ -235,15 +235,15 @@ class DrawingView: UIView {
     
     
     func reset(){
-        if !paths.isEmpty {
-            paths.removeAll()
-            setNeedsDisplay()
+        
+        if !shapeLayers.isEmpty {
+        for _ in shapeLayers {
+            layer.sublayers?.removeLast()
         }
-        if !shapeLayers.isEmpty{
-            shapeLayers.removeAll()
-            setNeedsDisplay()
+        path = UIBezierPath()
         }
         setNeedsDisplay()
+
     }
     
     func undoLayer() {
