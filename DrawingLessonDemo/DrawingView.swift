@@ -21,9 +21,9 @@ struct ShapeLayerType {
 }
 
 class ShapeLayer: CAShapeLayer {
-    override func contains(_ p: CGPoint) -> Bool {
-        return path?.contains(p, using: .winding, transform: .identity) ?? false
-    }
+//    override func contains(_ p: CGPoint) -> Bool {
+//        return path?.contains(p, using: .winding, transform: .identity) ?? false
+//    }
 }
 
 struct PathType{
@@ -46,8 +46,6 @@ class DrawingView: UIView {
     
     var mode: Mode = .draw
     
-    
-    //pordzum enq nor mas@
     var shapeLayers = [ShapeLayerType]()
     var shapeLayer: CAShapeLayer!
     var undoLayers = [ShapeLayerType]()

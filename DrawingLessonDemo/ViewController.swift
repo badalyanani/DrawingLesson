@@ -16,18 +16,16 @@ class ViewController: UIViewController {
       var tapGesture: UITapGestureRecognizer!
       var moveShapeLayer: ShapeLayerType?
       var shapeLayerColor: UIColor = .black
-    //  var locationArray = [CGPoint]()
+    
       var locationLayer = [(ShapeLayerType , CGPoint)]()
 
     @IBOutlet weak var drawingView: DrawingView!
     override func viewDidLoad() {
         super.viewDidLoad()
-//        drawingViewOutlet.clipsToBounds = true
+
         setupGestures()
         
-//        let tapGR = UITapGestureRecognizer(target: self, action: Selector(("didTap:")))
-//        self.view.addGestureRecognizer(tapGR)
-        // Do any additional setup after loading the view.
+
     }
     
     private func setupGestures() {
@@ -55,7 +53,6 @@ class ViewController: UIViewController {
          switch recognizer.state {
          case .began:
              let touchLocation = recognizer.location(in: drawingView)
-             // TODO: remove translation effect from touch location
              selectLayer(at: touchLocation)
          case .changed:
              guard let layer = selectedLayer else { return }
@@ -73,9 +70,7 @@ class ViewController: UIViewController {
              
              
          case .ended:
-           //  locationArray.append(recognizer.translation(in: recognizer.view))
-             //print(locationArray.count)
-             //locationLayer.append(contentsOf: <#T##Sequence#>)
+           
              guard let _ = selectedLayer else { return }
              
              print(drawingView.shapeLayers.count)
@@ -84,22 +79,21 @@ class ViewController: UIViewController {
          }
         
      }
-    
     private func selectLayer(at loc: CGPoint) {
-//        let newLocation = self.selectedLayer?.drawLayer.convert(loc, to: self.selectedLayer?.drawLayer.superlayer)
-        let layer = drawingView.layer.hitTest(loc)
-          guard let shapeLayer = layer as? ShapeLayer else {
-              print("Hit test returned layer of type: \(type(of: layer))")
-              selectedLayer = nil
-              return
-          }
-          print("Selected layer at location: \(loc)")
-          selectedLayer?.drawLayer.zPosition = 0.0
-          selectedLayer = ShapeLayerType(shapeLayer: shapeLayer,
-                                         color: shapeLayerColor)
-          shapeLayer.zPosition = 1.0
-      }
-     
+        let newLocation = drawingView.layer.convert(loc, to: drawingView.layer.superlayer)
+        let layer = drawingView.layer.hitTest(newLocation)
+        guard let shapeLayer = layer as? ShapeLayer else {
+            print("Hit test returned layer of type: \(type(of: layer))")
+            selectedLayer = nil
+            return
+        }
+        print("Selected layer at location: \(loc)")
+        selectedLayer?.drawLayer.zPosition = 0.0
+        selectedLayer = ShapeLayerType(shapeLayer: shapeLayer,
+                                       color: shapeLayerColor)
+        shapeLayer.zPosition = 1.0
+    }
+
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask{
         return .portrait
@@ -120,7 +114,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func undoButton(_ sender: UIButton) {
-//        drawingView.undoDrawingView()
+
         print(locationLayer.count)
         drawingView.undoLayer()
         
@@ -129,7 +123,6 @@ class ViewController: UIViewController {
     
     
     @IBAction func redoButton(_ sender: UIButton) {
-//        drawingView.redoDrawingView()
         drawingView.redoLayer()
           print(drawingView.shapeLayers.count)
         
