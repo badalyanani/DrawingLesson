@@ -12,7 +12,6 @@ import UIKit
 struct ShapeLayerType {
     var drawLayer: CAShapeLayer
     var color: UIColor
-    //    var movePosition: CGPoint?
     
     init(shapeLayer: CAShapeLayer, color: UIColor) {
         self.drawLayer = shapeLayer
@@ -21,9 +20,14 @@ struct ShapeLayerType {
 }
 
 class ShapeLayer: CAShapeLayer {
-//    override func contains(_ p: CGPoint) -> Bool {
-//        return path?.contains(p, using: .winding, transform: .identity) ?? false
-//    }
+    override func contains(_ p: CGPoint) -> Bool {
+        guard let path = path?.copy(strokingWithWidth: max(lineWidth, 20),
+                                    lineCap: .round,
+                                    lineJoin: .round,
+                                    miterLimit: .nan) else { return false }
+        return path.contains(p)
+    }
+    
 }
 
 struct PathType{
@@ -166,25 +170,15 @@ class DrawingView: UIView {
         shapeLayer.lineJoin = .round
         shapeLayer.strokeColor = color.cgColor
         shapeLayer.fillColor = nil
-        //        shapeLayer.backgroundColor = UIColor.randomColor.cgColor
         shapeLayers.append(ShapeLayerType(shapeLayer: shapeLayer, color: color))
         layer.addSublayer(shapeLayer)
         path.removeAllPoints()
-        let newActions = [
-            "onOrderIn": NSNull(),
-            "onOrderOut": NSNull(),
-            "sublayers": NSNull(),
-            "contents": NSNull(),
-            "bounds": NSNull(),
-        ]
-        shapeLayer.actions = newActions
         updateMaskImageView()
         setNeedsDisplay()
     }
     
     func updateMaskImageView() {
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, 0)
-        //        maskImageView.image?.draw(in: bounds)
         color.setStroke()
         
         let img = UIGraphicsGetImageFromCurrentImageContext()
@@ -235,13 +229,13 @@ class DrawingView: UIView {
     func reset(){
         
         if !shapeLayers.isEmpty {
-        for _ in shapeLayers {
-            layer.sublayers?.removeLast()
-        }
-        path = UIBezierPath()
+            for _ in shapeLayers {
+                layer.sublayers?.removeLast()
+            }
+            path = UIBezierPath()
         }
         setNeedsDisplay()
-
+        
     }
     
     func undoLayer() {

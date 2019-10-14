@@ -23,9 +23,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print ("viewDidLoad")
         setupGestures()
         
-
     }
     
     private func setupGestures() {
@@ -83,7 +83,7 @@ class ViewController: UIViewController {
         let newLocation = drawingView.layer.convert(loc, to: drawingView.layer.superlayer)
         let layer = drawingView.layer.hitTest(newLocation)
         guard let shapeLayer = layer as? ShapeLayer else {
-            print("Hit test returned layer of type: \(type(of: layer))")
+//            print("Hit test returned layer of type: \(type(of: layer))")
             selectedLayer = nil
             return
         }
